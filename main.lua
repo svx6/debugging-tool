@@ -79,40 +79,47 @@ local _t = task
 --  HTTP ENGINE  —  6 fallback methods, covers every executor ever made
 -- ══════════════════════════════════════════════════════════════════════════
 local function httpGet(url)
+    -- Safely resolve executor globals (some executors error on undefined global access)
+    local _syn          = rawget(_G, "syn")
+    local _request      = rawget(_G, "request")
+    local _http         = rawget(_G, "http")
+    local _http_request = rawget(_G, "http_request")
+    local _HttpGet      = rawget(_G, "HttpGet")
+
     -- Try each method, use whichever succeeds
     local methods = {}
 
-    if syn and syn.request then
+    if _syn and type(_syn) == "table" and type(_syn.request) == "function" then
         table.insert(methods, function()
-            local ok, r = pcall(syn.request, {Url=url, Method="GET",
+            local ok, r = pcall(_syn.request, {Url=url, Method="GET",
                 Headers={["User-Agent"]="AntigravityDebugger/9"}})
             if ok and r and r.StatusCode == 200 then return r.Body end
             if ok and r and r.StatusCode then error("HTTP "..r.StatusCode) end
         end)
     end
-    if request then
+    if type(_request) == "function" then
         table.insert(methods, function()
-            local ok, r = pcall(request, {Url=url, Method="GET",
+            local ok, r = pcall(_request, {Url=url, Method="GET",
                 Headers={["User-Agent"]="AntigravityDebugger/9"}})
             if ok and r and r.StatusCode == 200 then return r.Body end
             if ok and r and r.StatusCode then error("HTTP "..r.StatusCode) end
         end)
     end
-    if http and http.request then
+    if type(_http) == "table" and type(_http.request) == "function" then
         table.insert(methods, function()
-            local ok,r = pcall(http.request, {Url=url, Method="GET"})
+            local ok,r = pcall(_http.request, {Url=url, Method="GET"})
             if ok and r and r.StatusCode == 200 then return r.Body end
         end)
     end
-    if http_request then
+    if type(_http_request) == "function" then
         table.insert(methods, function()
-            local ok,r = pcall(http_request, {Url=url, Method="GET"})
+            local ok,r = pcall(_http_request, {Url=url, Method="GET"})
             if ok and r and r.StatusCode == 200 then return r.Body end
         end)
     end
-    if HttpGet then
+    if type(_HttpGet) == "function" then
         table.insert(methods, function()
-            local ok,b = pcall(HttpGet, game, url)
+            local ok,b = pcall(_HttpGet, game, url)
             if ok and type(b)=="string" and #b>0 then return b end
         end)
     end
