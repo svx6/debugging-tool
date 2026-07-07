@@ -84,10 +84,16 @@ end
 
 -- ── HTTP Fetcher — tries every known executor API ─────────────────────────
 local function httpGet(url)
+    -- Safely resolve executor globals (some executors error on undefined global access)
+    local _syn          = rawget(_G, "syn")
+    local _request      = rawget(_G, "request")
+    local _http         = rawget(_G, "http")
+    local _HttpGet      = rawget(_G, "HttpGet")
+
     -- Method 1: syn.request (Synapse X)
-    if syn and syn.request then
+    if _syn and type(_syn) == "table" and type(_syn.request) == "function" then
         local ok, res = _pcall(function()
-            return syn.request({Url = url, Method = "GET"})
+            return _syn.request({Url = url, Method = "GET"})
         end)
         if ok and res and res.StatusCode == 200 then
             return true, res.Body
@@ -98,9 +104,9 @@ local function httpGet(url)
     end
 
     -- Method 2: request (KRNL, Wave, Hydrogen, Fluxus, Codex)
-    if request then
+    if type(_request) == "function" then
         local ok, res = _pcall(function()
-            return request({Url = url, Method = "GET"})
+            return _request({Url = url, Method = "GET"})
         end)
         if ok and res and res.StatusCode == 200 then
             return true, res.Body
@@ -111,9 +117,9 @@ local function httpGet(url)
     end
 
     -- Method 3: http.request (some older executors)
-    if http and http.request then
+    if type(_http) == "table" and type(_http.request) == "function" then
         local ok, res = _pcall(function()
-            return http.request({Url = url, Method = "GET"})
+            return _http.request({Url = url, Method = "GET"})
         end)
         if ok and res and res.StatusCode == 200 then
             return true, res.Body
@@ -121,8 +127,8 @@ local function httpGet(url)
     end
 
     -- Method 4: HttpGet string form (some Roblox-side executors)
-    if HttpGet then
-        local ok, body = _pcall(HttpGet, game, url)
+    if type(_HttpGet) == "function" then
+        local ok, body = _pcall(_HttpGet, game, url)
         if ok and type(body) == "string" and #body > 0 then
             return true, body
         end
