@@ -532,34 +532,35 @@ for i, entry in ipairs(manifest.files) do
                 skipped = skipped + 1
             end
             _g.DebuggerModules[entry.path] = {loaded=false, time=0, error="Download failed"}
-            goto continue
         end
     end
-    writeLocal(entry.localPath, src)
-    newHashes[entry.path] = _tostring(#src)
-    bootMsg(string.format("[%d/%d] %s", i, total, entry.path:match("[^/]+%.?[^/]*$") or entry.path), pct)
-    local t0 = os.clock()
-    local ok, err = execSource(src, entry.path)
-    local dt = os.clock() - t0
-    if ok then
-        executed = executed + 1
-        _g.DebuggerModules[entry.path] = {loaded=true, time=dt, error=nil}
-        _print(string.format("  [%d/%d] OK %s (%.0fms)", i, total, entry.path, dt*1000))
-    else
-        errored = errored + 1
-        _g.DebuggerModules[entry.path] = {loaded=false, time=dt, error=err}
-        if entry.required then
-            _warn(string.format("  [%d/%d] REQUIRED FAIL: %s\n     %s", i, total, entry.path, err))
+
+    if src and src ~= false then
+        writeLocal(entry.localPath, src)
+        newHashes[entry.path] = _tostring(#src)
+        bootMsg(string.format("[%d/%d] %s", i, total, entry.path:match("[^/]+%.?[^/]*$") or entry.path), pct)
+        local t0 = os.clock()
+        local ok, err = execSource(src, entry.path)
+        local dt = os.clock() - t0
+        if ok then
+            executed = executed + 1
+            _g.DebuggerModules[entry.path] = {loaded=true, time=dt, error=nil}
+            _print(string.format("  [%d/%d] OK %s (%.0fms)", i, total, entry.path, dt*1000))
         else
-            _warn(string.format("  [%d/%d] ERR %s\n     %s", i, total, entry.path, err))
+            errored = errored + 1
+            _g.DebuggerModules[entry.path] = {loaded=false, time=dt, error=err}
+            if entry.required then
+                _warn(string.format("  [%d/%d] REQUIRED FAIL: %s\n     %s", i, total, entry.path, err))
+            else
+                _warn(string.format("  [%d/%d] ERR %s\n     %s", i, total, entry.path, err))
+            end
         end
+        local isHeavy = false
+        for _, name in ipairs(CFG.HeavyModules) do
+            if entry.path:find(name, 1, true) then isHeavy = true; break end
+        end
+        _t.wait(isHeavy and CFG.HeavyYield or CFG.YieldBetween)
     end
-    local isHeavy = false
-    for _, name in ipairs(CFG.HeavyModules) do
-        if entry.path:find(name, 1, true) then isHeavy = true; break end
-    end
-    _t.wait(isHeavy and CFG.HeavyYield or CFG.YieldBetween)
-    ::continue::
 end
 
 saveHashCache(newHashes)
