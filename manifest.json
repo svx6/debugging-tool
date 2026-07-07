@@ -1,0 +1,150 @@
+{
+  "repo": "svx6/debugging-tool",
+  "branch": "main",
+  "version": "9.0.0",
+  "updated": "2026-07-07",
+  "description": "Antigravity Ultimate Roblox Auto-Debugger — execute main.lua only",
+  "baseUrl": "https://raw.githubusercontent.com/svx6/debugging-tool/main",
+  "files": [
+    {
+      "path": "core.lua",
+      "local": "core.lua",
+      "required": true,
+      "priority": 0,
+      "group": "core",
+      "description": "Shared data store, pub-sub, helpers"
+    },
+    {
+      "path": "modules/crash_handler.lua",
+      "local": "modules/crash_handler.lua",
+      "required": true,
+      "priority": 5,
+      "group": "core",
+      "description": "ScriptContext.Error hook + watchdog"
+    },
+    {
+      "path": "modules/console_spy.lua",
+      "local": "modules/console_spy.lua",
+      "required": true,
+      "priority": 10,
+      "group": "monitoring",
+      "description": "LogService.MessageOut capture"
+    },
+    {
+      "path": "modules/performance_monitor.lua",
+      "local": "modules/performance_monitor.lua",
+      "required": true,
+      "priority": 12,
+      "group": "monitoring",
+      "description": "FPS / memory / ping rolling history"
+    },
+    {
+      "path": "modules/instance_tracker.lua",
+      "local": "modules/instance_tracker.lua",
+      "required": true,
+      "priority": 14,
+      "group": "monitoring",
+      "description": "Instance flood + GUI leak detection"
+    },
+    {
+      "path": "modules/player_audit.lua",
+      "local": "modules/player_audit.lua",
+      "required": true,
+      "priority": 20,
+      "group": "security",
+      "description": "Speed / fly / noclip / godmode detection"
+    },
+    {
+      "path": "modules/network_spy.lua",
+      "local": "modules/network_spy.lua",
+      "required": true,
+      "priority": 22,
+      "group": "security",
+      "description": "RemoteEvent / RemoteFunction hook"
+    },
+    {
+      "path": "modules/auto_remote.lua",
+      "local": "modules/auto_remote.lua",
+      "required": true,
+      "priority": 24,
+      "group": "security",
+      "description": "Remote block / replay / rate limiter"
+    },
+    {
+      "path": "modules/script_hook.lua",
+      "local": "modules/script_hook.lua",
+      "required": true,
+      "priority": 26,
+      "group": "security",
+      "description": "loadstring hook + virus scanner"
+    },
+    {
+      "path": "modules/object_inspector.lua",
+      "local": "modules/object_inspector.lua",
+      "required": true,
+      "priority": 30,
+      "group": "tools",
+      "description": "Click-to-inspect any game object"
+    },
+    {
+      "path": "modules/core_debugger.lua",
+      "local": "modules/core_debugger.lua",
+      "required": true,
+      "priority": 35,
+      "group": "tools",
+      "description": "Core debugger hooks and diagnostics"
+    },
+    {
+      "path": "modules/bug_finder.lua",
+      "local": "modules/bug_finder.lua",
+      "required": true,
+      "priority": 40,
+      "group": "tools",
+      "description": "Automated bug detection rules"
+    },
+    {
+      "path": "modules/auto_healer.lua",
+      "local": "modules/auto_healer.lua",
+      "required": true,
+      "priority": 42,
+      "group": "tools",
+      "description": "Auto-fix detected issues"
+    },
+    {
+      "path": "modules/value_watcher.lua",
+      "local": "modules/value_watcher.lua",
+      "required": true,
+      "priority": 44,
+      "group": "tools",
+      "description": "Signal-based property monitoring"
+    },
+    {
+      "path": "modules/game_downloader.lua",
+      "local": "modules/game_downloader.lua",
+      "required": false,
+      "priority": 50,
+      "group": "tools",
+      "description": "Save entire game to workspace files"
+    },
+    {
+      "path": "modules/ai_analyzer.lua",
+      "local": "modules/ai_analyzer.lua",
+      "required": true,
+      "priority": 60,
+      "group": "ai",
+      "description": "AI engine: 6 analysis engines, 30+ rules"
+    },
+    {
+      "path": "gui.lua",
+      "local": "gui.lua",
+      "required": true,
+      "priority": 99,
+      "group": "gui",
+      "description": "Main GUI — 12 tabs, mobile-friendly, draggable"
+    }
+  ],
+  "changelog": {
+    "9.0.0": "Smart bootstrapper: parallel downloads, auto-discover new files, SHA cache, priority ordering, hot-reload API. 17 modules: crash, inspector, script hook, value watcher, AI v8 (6 engines, 30+ rules), network spy, player audit, perf monitor, instance tracker, auto remote, console spy, bug finder, auto healer, game downloader, core debugger, GUI v8 (12 tabs).",
+    "8.0.0": "GitHub-first bootstrapper, all modules fetched live from repo."
+  }
+}
